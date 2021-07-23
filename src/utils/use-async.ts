@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { setConstantValue } from "typescript"
+import { useMountedRef } from "utils"
 
 interface State<D> {
     error: Error | null;
@@ -23,6 +24,9 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         ...defaultInitialState,
         ...initialState
     })
+
+    const mountedRef = useMountedRef()
+
     // useState直接传入函数的含义是：惰性初始化；所以要用useState保存函数，不能直接传入函数
     // 两种办法，一种是再包一层函数，一种是用useRef
     const [retry, setRetry] = useState(() => () => {
@@ -53,7 +57,8 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         })
         setState({...state, stat: 'loading'});
         return promise.then(data => {
-            setData(data);
+            if(mountedRef.current)
+                setData(data);
             return data;
         }).catch(error => {
             setError(error);
