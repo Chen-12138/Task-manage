@@ -47,6 +47,6 @@ export const useHttp = () => {
     return useCallback(
         (...[endpoint, config]: Parameters<typeof http>) => 
             http(endpoint, {...config, token: user?.token}),
-        [user?.token],
+        [user?.token]
     );
 }
