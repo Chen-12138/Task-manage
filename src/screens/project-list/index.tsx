@@ -12,7 +12,9 @@ import { useUsers } from "utils/user";
 import { useDocumentTitle } from "utils";
 import { useUrlQueryParam } from "utils/url";
 import { useProjectsSearchParams } from "./util";
-import { Row } from "components/lib";
+import { ButtonNoPadding, Row } from "components/lib";
+import { useDispatch } from "react-redux";
+import { projectListActions } from "./project-list.slice";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -32,6 +34,7 @@ export const ProjectListScreen = (props: { projectButton:JSX.Element }) => {
     // const client = useHttp();
     const { isLoading, error, data: list, retry } = useProjects(debouncedParam);
     const { data: users } = useUsers();
+    const dispatch = useDispatch();
     /*     useMount(() => {
             client('users').then(setUsers);
         }) */
@@ -42,7 +45,12 @@ export const ProjectListScreen = (props: { projectButton:JSX.Element }) => {
         <Container>
             <Row between={true}>
                 <h1>项目列表</h1>
-                {props.projectButton}
+                <ButtonNoPadding
+                    onClick={() => dispatch(projectListActions.openProjectModal())}
+                    type='link'
+                >
+                    创建项目
+                </ButtonNoPadding>
             </Row>
             <SearchPanel users={users || []} param={param} setParam={setParam} />
             {error ? (
